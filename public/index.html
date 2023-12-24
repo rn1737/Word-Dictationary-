@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RapidAPI Dictionary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">RapidAPI Dictionary</a> 
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+              </li>
+            </ul>
+            <form class="d-flex" id="searchForm">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="exampleInputEmail1">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+    </nav>
+    <div class="container my-4"> 
+        <h2 class="text-center">Search for a word in the Dictionary</h2> 
+        <form id="submitForm">
+            <div class="mb-3">
+                <label for="Word" class="form-label">Enter the Word</label>
+                <input type="text" class="form-control" id="wordInput" aria-describedby="emailHelp">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form> 
+        <h2 class="text-center">Results</h2>
+        <p id="result"></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script>
+      document.getElementById('submitForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        console.log('Form submitted');
+
+        const wordInput = document.getElementById('wordInput');
+        console.log('Word input value:', wordInput.value);
+
+        const result = document.getElementById('result');
+
+        let url = `http://localhost:3000/searchword?entry=${wordInput.value}`;
+        console.log('URL:', url);
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const resp = await response.json();
+            console.log('API response:', resp);
+
+            let htmlStr = `You searched for a word: ${resp.entry} <br> Here are the meanings <ul>`;
+            htmlStr += `<li>${resp.assoc_word.length > 0 ? resp.assoc_word[0] : "-"}</li>`;
+            htmlStr += `<li>${resp.assoc_word.length > 1 ? resp.assoc_word[1] : "-"}</li>`;
+            htmlStr += `<li>${resp.assoc_word.length > 2 ? resp.assoc_word[2] : "-"}</li>`;
+            htmlStr += `<li>${resp.assoc_word.length > 3 ? resp.assoc_word[3] : "-"}</li>`;
+            htmlStr += `</ul>`;
+
+            result.innerHTML = htmlStr;
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+    </script>
+</body>
+</html>
